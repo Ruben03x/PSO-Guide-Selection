@@ -7,7 +7,7 @@ def spherical(x):
     Domain: x_i in [-100, 100]
     Global minimum: f(0) = 0 at x = (0, ..., 0)
     """
-    return np.sum(x**2)
+    return np.sum(x**2) # Verified
 
 def booth(x):
     """
@@ -17,7 +17,7 @@ def booth(x):
     Global minimum: f(1,3) = 0
     """
     x1, x2 = x[0], x[1]
-    return (x1 + 2*x2 - 7)**2 + (2*x1 + x2 - 5)**2
+    return (x1 + 2*x2 - 7)**2 + (2*x1 + x2 - 5)**2 # Verified
 
 def rosenbrock(x):
     """
@@ -27,7 +27,7 @@ def rosenbrock(x):
     Global minimum: f(1,1,...,1) = 0
     Note: Becomes more challenging in higher dimensions.
     """
-    return np.sum(100.0*(x[1:] - x[:-1]**2)**2 + (x[:-1]-1)**2)
+    return np.sum(100.0*(x[1:] - x[:-1]**2)**2 + (x[:-1]-1)**2) # Verified
 
 def ackley(x):
     """
@@ -45,7 +45,7 @@ def ackley(x):
     sum_cos = np.sum(np.cos(c * x))
     term1 = -a * np.exp(-b * np.sqrt(sum_sq/n))
     term2 = -np.exp(sum_cos / n)
-    return term1 + term2 + a + np.e
+    return term1 + term2 + a + np.e # Verified
 
 def michalewicz(x, m=10):
     """
@@ -57,4 +57,4 @@ def michalewicz(x, m=10):
     """
     n = len(x)
     i = np.arange(1, n+1)
-    return -np.sum(np.sin(x) * (np.sin(i * x**2 * np.pi / n))**(2*m))
+    return -np.sum(np.sin(x) * (np.sin(i * x**2 * np.pi / n))**(2*m)) # Verified

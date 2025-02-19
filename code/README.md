@@ -8,7 +8,6 @@ w= 0.7
 c1= 1.4
 c2= 1.4
 num_particles= 30
-max_iter= 100
 
 ---
 
@@ -22,3 +21,13 @@ runs = 30
 The comment notes that Engelbrecht (2007) recommends a cooling factor between 0.95 and 0.99 for effective cooling in hybrid PSO-simulated annealing algorithms.
 A slower cooling rate (cooling factor closer to 1) helps maintain exploration for a longer period.
 A faster cooling rate (lower cooling factor) can lead to premature convergence.
+
+---
+Max iterations chosen as 20*dim to ensure the algorithm has enough time to converge.
+
+@post{post,
+author = {Shirazi, Abolfazl},
+year = {2018},
+month = {08},
+title = {Which is the best swarm size in PSO?}
+}
