@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from src import pso, benchmark_functions, utils
 
-def run_experiment(func, func_name, bounds, dim, guide_strategy, num_runs=30):
+def run_experiment(func, func_name, bounds, guide_strategy, num_runs=30):
     """
     Run a PSO experiment on a given benchmark function with a specific guide strategy.
     
@@ -11,7 +11,6 @@ def run_experiment(func, func_name, bounds, dim, guide_strategy, num_runs=30):
       - func: The benchmark function.
       - func_name: Name of the function.
       - bounds: Search space boundaries.
-      - dim: Number of dimensions.
       - guide_strategy: Guide selection strategy.
       - num_runs: Number of independent runs.
     
@@ -21,8 +20,14 @@ def run_experiment(func, func_name, bounds, dim, guide_strategy, num_runs=30):
       - std_val: Standard deviation of best values.
       - all_diversity: List of diversity histories (one per run).
     """
-    # Dynamically set max_iter based on dim
-    max_iter = 20 * dim  
+    # Dynamically determine the number of dimensions
+    dim = len(bounds)  # Number of dimensions inferred from bounds
+    if dim < 10:
+        max_iter = 50 * dim  # Increase iterations for small-dimension problems
+    elif 10 <= dim < 30:
+        max_iter = 100 * dim  # More iterations for medium-dimension problems
+    else:
+        max_iter = max(5000, 100 * dim)  # Default to 5000 for high-dim problems
     results = []
     all_diversity = []
 
@@ -36,17 +41,17 @@ def run_experiment(func, func_name, bounds, dim, guide_strategy, num_runs=30):
         print(f"Run {run+1}/{num_runs} - Best Value: {best_val:.6f}")
 
     df_results = pd.DataFrame(results, columns=["Run", "Strategy", "Best Value"])
-    avg_val = np.mean(df_results["Best Value"])
+    avg_val = np.median(df_results["Best Value"])
     std_val = np.std(df_results["Best Value"])
     return df_results, avg_val, std_val, all_diversity
 
 if __name__ == "__main__":
     benchmark_tests = [
-        ("Spherical", benchmark_functions.spherical, [(-100, 100)] * 2),
-        ("Booth", benchmark_functions.booth, [(-10, 10)] * 2),
-        ("Rosenbrock", benchmark_functions.rosenbrock, [(-30, 30)] * 2),
-        ("Ackley", benchmark_functions.ackley, [(-32, 32)] * 2),
-        ("Michalewicz", benchmark_functions.michalewicz, [(0, np.pi)] * 2)
+        ("Spherical", benchmark_functions.spherical, [(-100, 100)] * 30), 
+        ("Booth", benchmark_functions.booth, [(-10, 10)] * 2),            
+        ("Rosenbrock", benchmark_functions.rosenbrock, [(-30, 30)] * 2),     
+        ("Ackley", benchmark_functions.ackley, [(-32, 32)] * 30),             
+        ("Michalewicz", benchmark_functions.michalewicz, [(0, np.pi)] * 10)    
     ]
 
     strategies = ['elitist', 'simulated_annealing', 'roulette', 'tournament', 'rank']
@@ -56,10 +61,12 @@ if __name__ == "__main__":
         diversity_summary = {}
         strategy_summary = []
 
+        dim = len(bounds)  # Dynamically extract dimensions
+
         for strategy in strategies:
-            print(f"\nRunning experiment for {func_name} using {strategy} strategy...\n")
+            print(f"\nRunning experiment for {func_name} using {strategy} strategy (dim={dim})...\n")
             df_results, avg_val, std_val, diversity_history = run_experiment(
-                func, func_name, bounds, dim=2, guide_strategy=strategy, num_runs=30
+                func, func_name, bounds, guide_strategy=strategy, num_runs=30
             )
             df_results["Benchmark"] = func_name
             aggregate_results.append(df_results)
@@ -89,7 +96,7 @@ if __name__ == "__main__":
         )
         plt.xlabel("Guide Strategy")
         plt.ylabel("Best Function Value")
-        plt.title(f"Optimization Performance on {func_name}")
+        plt.title(f"Optimization Performance on {func_name} (dim={dim})")
         plt.xticks(rotation=45)
         plt.yscale("linear")
         plt.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -103,7 +110,7 @@ if __name__ == "__main__":
             plt.plot(diversity_values, label=strategy)
         plt.xlabel("Iterations")
         plt.ylabel("Swarm Diversity")
-        plt.title(f"Swarm Diversity Over Time - {func_name}")
+        plt.title(f"Swarm Diversity Over Time - {func_name} (dim={dim})")
         plt.legend()
         plt.grid(True, linestyle='--', alpha=0.7)
         plt.tight_layout()
@@ -117,7 +124,7 @@ if __name__ == "__main__":
             plt.plot(df_temp["Run"], df_temp["Best Value"], marker='o', label=strategy)
         plt.xlabel("Run")
         plt.ylabel("Best Function Value")
-        plt.title(f"Convergence of Strategies - {func_name}")
+        plt.title(f"Convergence of Strategies - {func_name} (dim={dim})")
         plt.legend()
         plt.tight_layout()
         plt.savefig(f"results/{func_name.lower()}_convergence.png")

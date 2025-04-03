@@ -24,7 +24,7 @@ class Particle:
 # Define the PSO (Particle Swarm Optimization) class.
 class PSO:
     def __init__(self, func, bounds, dim, num_particles=30, max_iter=100, 
-                 w=0.7, c1=1.4, c2=1.4, guide_strategy='elitist', cooling_factor=0.99, global_guide=True):
+                 w=0.7, c1=1.4, c2=1.4, guide_strategy='elitist', cooling_factor=0.99, global_guide=False):
         """
         Initializes the PSO optimizer.
         
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     bounds = [(-100, 100)] * dim
     # Change global_guide to True to use Approach A, or False to use Approach B.
     pso = PSO(func=benchmark_functions.spherical, bounds=bounds, dim=dim,
-              num_particles=30, max_iter=20*dim, guide_strategy='elitist', cooling_factor=0.99, global_guide=True)
+              num_particles=30, max_iter=20*dim, guide_strategy='elitist', cooling_factor=0.99, global_guide=False)
     best_pos, best_val, diversity = pso.optimize(track_diversity=True)
     print("Best position:", best_pos)
     print("Best value:", best_val)
